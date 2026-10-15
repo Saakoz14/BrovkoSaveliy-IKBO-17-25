@@ -1,0 +1,6 @@
+# Команды выполняются последовательно и отображаются на экране.
+ls
+ls "folder with spaces"
+cd "folder with spaces"
+exit
+
