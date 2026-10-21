@@ -1,0 +1,8 @@
+package,version,dependency,dependency_version
+A,1.0.0,B,[1.0.0]
+A,1.0.0,X,[1.0.0]
+B,1.0.0,D,[1.0.0]
+X,1.0.0,E,[1.0.0]
+D,1.0.0,,
+E,1.0.0,,
+

@@ -1,0 +1,8 @@
+key,value
+package_name,A
+repository,../repositories/cycle.csv
+test_mode,true
+package_version,1.0.0
+max_depth,10
+filter_substring,
+

@@ -1,0 +1,8 @@
+key,value
+package_name,bad package
+repository,not-a-url
+test_mode,yes
+package_version,latest
+max_depth,-1
+filter_substring,System
+

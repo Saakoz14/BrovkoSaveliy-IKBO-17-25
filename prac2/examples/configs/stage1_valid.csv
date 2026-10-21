@@ -1,0 +1,8 @@
+key,value
+package_name,Newtonsoft.Json
+repository,https://api.nuget.org/v3-flatcontainer
+test_mode,false
+package_version,13.0.3
+max_depth,3
+filter_substring,System
+
