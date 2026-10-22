@@ -35,13 +35,15 @@ def make_package(nuspec: bytes = NUSPEC) -> bytes:
 class NuGetRepositoryTest(unittest.TestCase):
     """Проверка URL и извлечения прямых зависимостей."""
 
-    def setUp(self) -> None:
-        self.repository = NuGetRepository(
+    def create_repository(self) -> NuGetRepository:
+        """Создать тестовый источник пакетов NuGet."""
+        return NuGetRepository(
             "https://api.nuget.org/v3-flatcontainer/"
         )
 
     def test_builds_flat_container_url(self) -> None:
-        url = self.repository.package_url("Example.Package", "1.2.3")
+        repository = self.create_repository()
+        url = repository.package_url("Example.Package", "1.2.3")
         expected = (
             "https://api.nuget.org/v3-flatcontainer/"
             "example.package/1.2.3/example.package.1.2.3.nupkg"
@@ -49,7 +51,8 @@ class NuGetRepositoryTest(unittest.TestCase):
         self.assertEqual(url, expected)
 
     def test_extracts_dependencies_from_nuspec(self) -> None:
-        dependencies = self.repository.dependencies_from_package(
+        repository = self.create_repository()
+        dependencies = repository.dependencies_from_package(
             make_package()
         )
         self.assertEqual(
@@ -61,13 +64,15 @@ class NuGetRepositoryTest(unittest.TestCase):
         )
 
     def test_rejects_invalid_archive(self) -> None:
+        repository = self.create_repository()
         with self.assertRaisesRegex(NuGetError, "некорректный пакет"):
-            self.repository.dependencies_from_package(b"not a zip")
+            repository.dependencies_from_package(b"not a zip")
 
     def test_rejects_invalid_nuspec(self) -> None:
+        repository = self.create_repository()
         package = make_package(b"<package>")
         with self.assertRaisesRegex(NuGetError, "некорректный XML"):
-            self.repository.dependencies_from_package(package)
+            repository.dependencies_from_package(package)
 
 
 if __name__ == "__main__":
