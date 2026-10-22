@@ -13,6 +13,7 @@ from .models import PackageRef
 from .nuget import NuGetError, NuGetRepository
 from .repository import DependencyRepository
 from .test_repository import TestRepository, TestRepositoryError
+from .visualization import save_graph_svg
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -35,9 +36,10 @@ def main(arguments: Sequence[str] | None = None) -> int:
     try:
         config = load_config(options.config)
         repository = create_repository(config)
+        root = PackageRef(config.package_name, config.package_version)
         graph = build_graph_bfs(
             repository=repository,
-            root=PackageRef(config.package_name, config.package_version),
+            root=root,
             max_depth=config.max_depth,
             filter_substring=config.filter_substring,
         )
@@ -50,6 +52,13 @@ def main(arguments: Sequence[str] | None = None) -> int:
     print("Граф зависимостей:")
     for line in graph.format_lines():
         print(line)
+    output_path = Path(__file__).resolve().parents[1] / "output"
+    image_path = save_graph_svg(
+        graph,
+        root,
+        output_path / "dependency_graph.svg",
+    )
+    print(f"Изображение графа сохранено: {image_path}")
     return 0
 
 
@@ -62,24 +71,3 @@ def create_repository(config: AppConfig) -> DependencyRepository:
 
 if __name__ == "__main__":
     sys.exit(main())
-
-'''
-cd "/Users/lkzz/PycharmProjects/PythonProject1/practice2"
-
-# Обычный транзитивный граф
-./scripts/run_test_basic.sh
-
-# Ограничение глубины
-./scripts/run_test_depth.sh
-
-# Циклические зависимости
-./scripts/run_test_cycle.sh
-
-# Фильтрация пакетов
-./scripts/run_test_filter.sh
-
-# Работа с настоящим NuGet
-./scripts/run_live_nuget.sh
-
-# Автоматические тесты
-python3 -m unittest discover -s tests -v'''
