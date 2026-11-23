@@ -92,6 +92,25 @@ python3 -m src.interpreter PROGRAM.bin DUMP.csv --start 0 --end 100
 
 Результат находится в `output/modulo_dump.csv` по адресу `300`.
 
+## Этап 5. Вектор по модулю 213
+
+В каталоге `examples` находятся три программы `vector_mod_1.csv`,
+`vector_mod_2.csv`, `vector_mod_3.csv`. Каждая вычисляет остаток от деления
+семи элементов на `213` и сохраняет новый вектор по адресам `200..206`.
+
+```bash
+./scripts/run_vectors.sh
+```
+
+Созданные дампы находятся в `output/*_dump.csv`, а эталонные результаты — в
+`examples/expected`.
+
+## Полная демонстрация
+
+```bash
+./scripts/run_all.sh
+```
+
 ## Тесты
 
 ```bash
