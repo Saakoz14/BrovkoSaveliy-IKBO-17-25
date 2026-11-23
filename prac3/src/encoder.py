@@ -1,4 +1,4 @@
-"""Кодирование и декодирование 7-байтовых команд УВМ."""
+"""Кодирование 7-байтовых команд УВМ."""
 
 from __future__ import annotations
 
@@ -8,7 +8,7 @@ from .specification import COMMANDS, COMMANDS_BY_OPCODE, INSTRUCTION_SIZE
 
 
 def encode_instruction(instruction: Instruction) -> bytes:
-    """Преобразовать одну команду в машинное представление."""
+    """Закодировать одну команду."""
     spec = COMMANDS[instruction.mnemonic]
     value = spec.opcode
     for field, operand in zip(spec.fields, instruction.operands):
@@ -22,7 +22,7 @@ def encode_instruction(instruction: Instruction) -> bytes:
 
 
 def decode_instruction(machine_code: bytes) -> Instruction:
-    """Преобразовать одну машинную команду во внутренний объект."""
+    """Декодировать одну машинную команду."""
     if len(machine_code) != INSTRUCTION_SIZE:
         raise AssemblyError(
             f"команда должна занимать {INSTRUCTION_SIZE} байт"
@@ -39,11 +39,11 @@ def decode_instruction(machine_code: bytes) -> Instruction:
 
 
 def assemble_program(instructions: list[Instruction]) -> bytes:
-    """Объединить закодированные команды в бинарную программу."""
+    """Собрать бинарную программу."""
     return b"".join(encode_instruction(item) for item in instructions)
 
 
 def format_bytes(machine_code: bytes) -> str:
-    """Представить байты в шестнадцатеричном формате спецификации."""
+    """Представить байты шестнадцатеричными числами."""
     return ", ".join(f"0x{byte:02X}" for byte in machine_code)
 

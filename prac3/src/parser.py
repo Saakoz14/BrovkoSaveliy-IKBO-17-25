@@ -1,4 +1,4 @@
-"""Разбор CSV-языка ассемблера в промежуточное представление."""
+"""Разбор CSV-языка ассемблера."""
 
 from __future__ import annotations
 
@@ -13,11 +13,11 @@ CSV_COLUMNS = ["mnemonic", "b", "c", "d"]
 
 
 class AssemblyError(Exception):
-    """Ошибка исходной программы на языке ассемблера."""
+    """Ошибка исходной программы."""
 
 
 def parse_program(path: Path) -> list[Instruction]:
-    """Прочитать и проверить программу в формате CSV."""
+    """Прочитать и проверить CSV-программу."""
     if not path.is_file():
         raise AssemblyError(f"исходный файл не найден: {path}")
     try:
@@ -32,25 +32,28 @@ def parse_program(path: Path) -> list[Instruction]:
                 for line_number, row in enumerate(reader, start=2)
             ]
     except (OSError, csv.Error) as error:
-        raise AssemblyError(f"не удалось прочитать CSV: {error}") from error
+        message = f"не удалось прочитать CSV: {error}"
+        raise AssemblyError(message) from error
     if not instructions:
         raise AssemblyError("программа не содержит команд")
     return instructions
 
 
 def _parse_row(row: dict[str, str | None], line_number: int) -> Instruction:
+    """Преобразовать одну CSV-строку в команду."""
     mnemonic = (row.get("mnemonic") or "").strip().lower()
     if mnemonic not in COMMANDS:
-        raise AssemblyError(
-            f"строка {line_number}: неизвестная команда {mnemonic!r}"
+        message = (
+            f"строка {line_number}: неизвестная команда "
+            f"{mnemonic!r}"
         )
+        raise AssemblyError(message)
     spec = COMMANDS[mnemonic]
     cells = [(row.get(name) or "").strip() for name in ("b", "c", "d")]
     expected_count = len(spec.fields)
     if any(cells[index] for index in range(expected_count, 3)):
-        raise AssemblyError(
-            f"строка {line_number}: у команды {mnemonic} лишние поля"
-        )
+        message = f"строка {line_number}: у команды {mnemonic} лишние поля"
+        raise AssemblyError(message)
     operands = tuple(
         _parse_operand(cells[index], field.maximum, line_number, field.name)
         for index, field in enumerate(spec.fields)
@@ -64,6 +67,7 @@ def _parse_operand(
     line_number: int,
     field_name: str,
 ) -> int:
+    """Прочитать числовое поле и проверить его диапазон."""
     if not text:
         raise AssemblyError(
             f"строка {line_number}: отсутствует поле {field_name}"
@@ -71,13 +75,16 @@ def _parse_operand(
     try:
         value = int(text, 0)
     except ValueError as error:
-        raise AssemblyError(
-            f"строка {line_number}: поле {field_name} не является числом"
-        ) from error
-    if not 0 <= value <= maximum:
-        raise AssemblyError(
-            f"строка {line_number}: поле {field_name} вне диапазона "
-            f"0..{maximum}"
+        message = (
+            f"строка {line_number}: поле {field_name} "
+            "не является числом"
         )
+        raise AssemblyError(message) from error
+    if not 0 <= value <= maximum:
+        message = (
+            f"строка {line_number}: поле {field_name} "
+            f"вне диапазона 0..{maximum}"
+        )
+        raise AssemblyError(message)
     return value
 

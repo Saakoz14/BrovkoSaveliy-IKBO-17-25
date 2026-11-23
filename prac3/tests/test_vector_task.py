@@ -21,10 +21,10 @@ def read_expected(path: Path) -> list[int]:
 
 
 class VectorTaskTest(unittest.TestCase):
-    """Проверка трёх примеров вычисления остатка по модулю 213."""
+    """Проверка трёх векторных примеров."""
 
     def check_example(self, name: str) -> None:
-        """Собрать и выполнить один пример, затем сравнить результат."""
+        """Выполнить пример и сравнить результат."""
         source = PROJECT_DIRECTORY / "examples" / f"{name}.csv"
         expected_path = (
             PROJECT_DIRECTORY / "examples" / "expected" / f"{name}.csv"
@@ -39,12 +39,15 @@ class VectorTaskTest(unittest.TestCase):
         )
 
     def test_first_vector(self) -> None:
+        """Первый набор данных даёт ожидаемый вектор."""
         self.check_example("vector_mod_1")
 
     def test_second_vector(self) -> None:
+        """Второй набор проверяет границы делителя."""
         self.check_example("vector_mod_2")
 
     def test_third_vector(self) -> None:
+        """Третий набор проверяет произвольные числа."""
         self.check_example("vector_mod_3")
 
 

@@ -1,4 +1,4 @@
-"""CLI-приложение ассемблера учебной виртуальной машины."""
+"""CLI-приложение ассемблера УВМ."""
 
 from __future__ import annotations
 
@@ -14,10 +14,20 @@ from .specification import COMMANDS
 
 
 def build_parser() -> argparse.ArgumentParser:
-    """Создать парсер аргументов командной строки."""
-    parser = argparse.ArgumentParser(description="Ассемблер УВМ, вариант 5")
-    parser.add_argument("source", type=Path, help="исходная CSV-программа")
-    parser.add_argument("output", type=Path, help="выходной бинарный файл")
+    """Создать парсер аргументов CLI."""
+    parser = argparse.ArgumentParser(
+        description="Ассемблер УВМ, вариант 5"
+    )
+    parser.add_argument(
+        "source",
+        type=Path,
+        help="исходная CSV-программа",
+    )
+    parser.add_argument(
+        "output",
+        type=Path,
+        help="выходной бинарный файл",
+    )
     parser.add_argument(
         "--test",
         action="store_true",
@@ -27,7 +37,7 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def format_instruction(instruction: Instruction) -> str:
-    """Представить команду как набор полей и значений."""
+    """Представить команду набором полей."""
     spec = COMMANDS[instruction.mnemonic]
     fields = [f"A={spec.opcode}"]
     fields.extend(
@@ -38,7 +48,7 @@ def format_instruction(instruction: Instruction) -> str:
 
 
 def main(arguments: Sequence[str] | None = None) -> int:
-    """Разобрать программу и записать её машинный код."""
+    """Разобрать и записать машинный код."""
     options = build_parser().parse_args(arguments)
     try:
         instructions = parse_program(options.source)

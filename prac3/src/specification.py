@@ -11,7 +11,7 @@ MEMORY_SIZE = 1 << 14
 
 @dataclass(frozen=True)
 class FieldSpec:
-    """Положение и допустимый размер поля команды."""
+    """Положение и размер поля команды."""
 
     name: str
     shift: int

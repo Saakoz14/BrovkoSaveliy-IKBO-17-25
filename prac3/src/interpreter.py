@@ -1,4 +1,4 @@
-"""Интерпретатор и модель памяти учебной виртуальной машины."""
+"""Интерпретатор и модель памяти УВМ."""
 
 from __future__ import annotations
 
@@ -22,19 +22,19 @@ class VirtualMachine:
     """УВМ с раздельной памятью команд и данных."""
 
     def __init__(self, memory_size: int = MEMORY_SIZE) -> None:
+        """Создать пустую память команд и данных."""
         self.instruction_memory = b""
         self.data_memory = [0] * memory_size
 
     def load_program(self, machine_code: bytes) -> None:
-        """Загрузить бинарную программу в память команд."""
+        """Загрузить программу в память команд."""
         if len(machine_code) % INSTRUCTION_SIZE != 0:
-            raise ExecutionError(
-                "размер программы должен быть кратен размеру команды"
-            )
+            message = "размер программы должен быть кратен размеру команды"
+            raise ExecutionError(message)
         self.instruction_memory = bytes(machine_code)
 
     def run(self) -> None:
-        """Последовательно декодировать и выполнять команды."""
+        """Декодировать и выполнить команды."""
         for offset in range(0, len(self.instruction_memory), INSTRUCTION_SIZE):
             machine_code = self.instruction_memory[
                 offset:offset + INSTRUCTION_SIZE
@@ -42,9 +42,8 @@ class VirtualMachine:
             try:
                 instruction = decode_instruction(machine_code)
             except AssemblyError as error:
-                raise ExecutionError(
-                    f"ошибка команды по смещению {offset}: {error}"
-                ) from error
+                message = f"ошибка команды по смещению {offset}: {error}"
+                raise ExecutionError(message) from error
             self.execute(instruction)
 
     def execute(self, instruction: Instruction) -> None:
@@ -74,9 +73,8 @@ class VirtualMachine:
                 self._read(dividend_address) % divisor,
             )
             return
-        raise ExecutionError(
-            f"команда {instruction.mnemonic} пока не поддерживается"
-        )
+        message = f"команда {instruction.mnemonic} пока не поддерживается"
+        raise ExecutionError(message)
 
     def _read(self, address: int) -> int:
         """Прочитать ячейку с проверкой адреса."""
@@ -84,18 +82,21 @@ class VirtualMachine:
         return self.data_memory[address]
 
     def _write(self, address: int, value: int) -> None:
-        """Записать значение в ячейку с проверкой адреса."""
+        """Записать значение с проверкой адреса."""
         self._validate_address(address)
         self.data_memory[address] = value
 
     def _validate_address(self, address: int) -> None:
+        """Проверить попадание адреса в память данных."""
         if not 0 <= address < len(self.data_memory):
-            raise ExecutionError(f"адрес памяти вне диапазона: {address}")
+            message = f"адрес памяти вне диапазона: {address}"
+            raise ExecutionError(message)
 
     def save_dump(self, path: Path, start: int, end: int) -> None:
-        """Сохранить включительный диапазон памяти в CSV-файл."""
+        """Сохранить диапазон памяти в CSV-файл."""
         if start > end:
-            raise ExecutionError("начало дампа не может быть больше конца")
+            message = "начало дампа не может быть больше конца"
+            raise ExecutionError(message)
         self._validate_address(start)
         self._validate_address(end)
         path.parent.mkdir(parents=True, exist_ok=True)
@@ -111,7 +112,11 @@ class VirtualMachine:
 def build_parser() -> argparse.ArgumentParser:
     """Создать парсер аргументов интерпретатора."""
     parser = argparse.ArgumentParser(description="Интерпретатор УВМ")
-    parser.add_argument("program", type=Path, help="бинарная программа")
+    parser.add_argument(
+        "program",
+        type=Path,
+        help="бинарная программа",
+    )
     parser.add_argument("dump", type=Path, help="выходной CSV-дамп")
     parser.add_argument("--start", type=int, required=True)
     parser.add_argument("--end", type=int, required=True)
@@ -119,7 +124,7 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def main(arguments: Sequence[str] | None = None) -> int:
-    """Загрузить, выполнить программу и сохранить дамп памяти."""
+    """Выполнить программу и сохранить дамп."""
     options = build_parser().parse_args(arguments)
     try:
         machine = VirtualMachine()

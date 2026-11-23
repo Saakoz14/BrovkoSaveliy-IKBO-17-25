@@ -18,9 +18,10 @@ def write_source(directory: Path, content: str) -> Path:
 
 
 class ParserTest(unittest.TestCase):
-    """Проверка промежуточного представления команд."""
+    """Проверка промежуточных команд."""
 
     def test_parses_all_commands(self) -> None:
+        """Парсер принимает все четыре мнемоники."""
         with tempfile.TemporaryDirectory() as temporary:
             path = write_source(
                 Path(temporary),
@@ -38,15 +39,18 @@ class ParserTest(unittest.TestCase):
         )
 
     def test_rejects_unknown_command(self) -> None:
+        """Парсер отклоняет неизвестную мнемонику."""
         with tempfile.TemporaryDirectory() as temporary:
             path = write_source(
                 Path(temporary),
                 "mnemonic,b,c,d\nmissing,1,2,\n",
             )
-            with self.assertRaisesRegex(AssemblyError, "неизвестная команда"):
+            pattern = "неизвестная команда"
+            with self.assertRaisesRegex(AssemblyError, pattern):
                 parse_program(path)
 
     def test_rejects_out_of_range_field(self) -> None:
+        """Парсер проверяет битовый диапазон поля."""
         with tempfile.TemporaryDirectory() as temporary:
             path = write_source(
                 Path(temporary),
