@@ -79,6 +79,19 @@ python3 -m src.interpreter PROGRAM.bin DUMP.csv --start 0 --end 100
 
 Результат сохраняется в `output/copy_array_dump.csv`.
 
+## Этап 4. Операция взятия остатка
+
+Команда `mod` берёт первый операнд через двойную адресацию `memory[D]`,
+второй операнд из `memory[B]` и сохраняет результат в `memory[C]`.
+
+Демонстрация вычисления `17 % 5 = 2`:
+
+```bash
+./scripts/run_modulo.sh
+```
+
+Результат находится в `output/modulo_dump.csv` по адресу `300`.
+
 ## Тесты
 
 ```bash

@@ -63,6 +63,17 @@ class VirtualMachine:
             destination = self._read(pointer_address) + displacement
             self._write(destination, self._read(source))
             return
+        if instruction.mnemonic == "mod":
+            divisor_address, destination, pointer_address = instruction.operands
+            dividend_address = self._read(pointer_address)
+            divisor = self._read(divisor_address)
+            if divisor == 0:
+                raise ExecutionError("деление с остатком на ноль")
+            self._write(
+                destination,
+                self._read(dividend_address) % divisor,
+            )
+            return
         raise ExecutionError(
             f"команда {instruction.mnemonic} пока не поддерживается"
         )

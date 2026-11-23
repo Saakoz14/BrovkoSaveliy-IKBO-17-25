@@ -46,6 +46,29 @@ class InterpreterTest(unittest.TestCase):
             "address,value\n2,7\n3,8\n4,9\n",
         )
 
+    def test_calculates_modulo(self) -> None:
+        instructions = [
+            Instruction("load_const", (100, 17)),
+            Instruction("load_const", (200, 5)),
+            Instruction("load_const", (50, 100)),
+            Instruction("mod", (200, 300, 50)),
+        ]
+        machine = VirtualMachine()
+        machine.load_program(assemble_program(instructions))
+        machine.run()
+        self.assertEqual(machine.data_memory[300], 2)
+
+    def test_rejects_modulo_by_zero(self) -> None:
+        instructions = [
+            Instruction("load_const", (100, 17)),
+            Instruction("load_const", (50, 100)),
+            Instruction("mod", (200, 300, 50)),
+        ]
+        machine = VirtualMachine()
+        machine.load_program(assemble_program(instructions))
+        with self.assertRaisesRegex(ExecutionError, "на ноль"):
+            machine.run()
+
     def test_rejects_invalid_program_size(self) -> None:
         machine = VirtualMachine()
         with self.assertRaisesRegex(ExecutionError, "кратен"):

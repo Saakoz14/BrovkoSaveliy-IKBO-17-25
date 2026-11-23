@@ -1,0 +1,6 @@
+mnemonic,b,c,d
+load_const,100,17,
+load_const,200,5,
+load_const,50,100,
+mod,200,300,50
+
