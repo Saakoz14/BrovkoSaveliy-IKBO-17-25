@@ -1,0 +1,13 @@
+mnemonic,b,c,d
+load_const,100,11,
+load_const,101,22,
+load_const,102,33,
+load_const,50,100,
+load_const,51,200,
+read,0,50,60
+write,60,51,0
+read,1,50,60
+write,60,51,1
+read,2,50,60
+write,60,51,2
+
