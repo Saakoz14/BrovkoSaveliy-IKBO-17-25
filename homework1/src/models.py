@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import TypeAlias
+from typing import Dict, Union
 
 
 @dataclass(frozen=True)
@@ -13,9 +13,11 @@ class ConstantReference:
     name: str
 
 
-RawValue: TypeAlias = (
-    int | dict[str, "RawValue"] | ConstantReference
-)
+RawValue = Union[
+    int,
+    Dict[str, "RawValue"],
+    ConstantReference,
+]
 
 
 @dataclass(frozen=True)
@@ -26,5 +28,5 @@ class Declaration:
     value: RawValue
 
 
-ResolvedValue: TypeAlias = int | dict[str, "ResolvedValue"]
+ResolvedValue = Union[int, Dict[str, "ResolvedValue"]]
 
