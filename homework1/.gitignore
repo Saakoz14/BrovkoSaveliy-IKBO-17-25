@@ -3,6 +3,7 @@ __pycache__/
 .coverage
 .idea/
 .pytest_cache/
+.ruff_cache/
 .venv/
 dist/
 build/
