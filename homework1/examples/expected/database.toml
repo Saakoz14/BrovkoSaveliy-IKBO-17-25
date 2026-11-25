@@ -1,0 +1,12 @@
+pool_size = 20
+
+[database]
+pool = 20
+
+[database.primary]
+host_id = 1
+port = 5432
+
+[database.replicas]
+first = 2
+second = 3
