@@ -1,0 +1,21 @@
+start: declaration*
+
+declaration: "global" NAME "=" value
+
+?value: SIGNED_INT     -> number
+      | dictionary
+      | constant_ref
+
+dictionary: "dict" "(" [pair_list] ")"
+pair_list: pair ("," pair)* [","]
+pair: NAME "=" value
+constant_ref: "$[" NAME "]"
+
+NAME: /[a-z][a-z0-9_]*/
+MULTILINE_COMMENT: /%\{(.|\n)*?%\}/
+
+%import common.SIGNED_INT
+%import common.WS
+%ignore WS
+%ignore MULTILINE_COMMENT
+
